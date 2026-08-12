@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JRT Gripper Control</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>JRT Gripper Control</h1>
+
+    <section>
+        <h2>Connection</h2>
+
+        <p>
+            Status :
+            <span id="connectionStatus">
+                DISCONNECTED
+            </span>
+        </p>
+
+        <button id="btnConnect">
+            Connect
+        </button>
+
+        <button id="btnDisconnect">
+            Disconnect
+        </button>
+    </section>
+
+    <section>
+        <h2>Motion Parameters</h2>
+
+        <div>
+            <label for="inputPosition">Position</label>
+            <input id="inputPosition" type="number" value="500">
+        </div>
+
+        <div>
+            <label for="inputSpeed">Speed</label>
+            <input id="inputSpeed" type="number" value="50">
+        </div>
+
+        <div>
+            <label for="inputTorque">Torque</label>
+            <input id="inputTorque" type="number" value="50">
+        </div>
+    </section>
+
+   <section>
+
+        <h2>Motion</h2>
+
+        <button id ="btnOpen">
+            Open
+        </button>
+    
+        <button id ="btnClose">
+            Close
+        </button>
+
+        <button id = "btnStandby">
+            Standby
+        </button>
+
+        <button id = "btnGrip">
+            Grip
+        </button>
+
+        <button id = "btnStop">
+            Stop
+        </button>
+
+   </section>
+
+   <section>
+        <h2>Feedback</h2>
+
+        <p>
+            Position :
+            <span id="actualPosition">0</span>
+        </p>
+
+        <p>
+            Speed :
+            <span id="actualSpeed">0</span>
+        </p>
+
+        <p>
+            Torque:
+            <span id="actualTorque">0</span>
+        </p>
+
+        <p>
+            Current Operation :
+            <span id = "currentOperation">IDLE</span>
+        </p>
+
+        <p>
+            Grip Detected :
+            <span id = "gripDetected">false</span>
+        </p>
+
+   </section>
+
+   <section>
+
+        <h2>Log</h2>
+
+        <div id="logArea">
+            System Ready
+        </div>
+
+   </section>
+
+    <script src="app.js"></script>
+
+</body>
+
+
