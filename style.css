@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 30px;
-    background-color: #8b8bca;
+    background-color: #7a7a9b;
 }
 
 h1 {
@@ -10,7 +10,7 @@ h1 {
 }
 
 section {
-    background-color: rgb(209, 203, 203);
+    background-color: rgb(216, 201, 201);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 14px;
@@ -18,7 +18,7 @@ section {
 
 label {
     display: inline-block;
-    width: 80px;
+    width: 111px;
 }
 
 input {

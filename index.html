@@ -36,18 +36,96 @@
 
         <div>
             <label for="inputPosition">Position</label>
-            <input id="inputPosition" type="number" value="500">
+            <input id="inputPosition" 
+                        type="number" 
+                        min="0"
+                        max="1000"
+                        value="500">
         </div>
 
         <div>
             <label for="inputSpeed">Speed</label>
-            <input id="inputSpeed" type="number" value="50">
+            <input id="inputSpeed" 
+                        type="number" 
+                        min="0"
+                        max="100"
+                        value="50">
         </div>
 
         <div>
             <label for="inputTorque">Torque</label>
-            <input id="inputTorque" type="number" value="50">
+            <input id="inputTorque" 
+                        type="number" 
+                        min="0"
+                        max="100"
+                        value="50">
         </div>
+
+        <div>
+            <label for="inputInternalRange">Internal Range</label>
+            <input id="inputInternalRange" type="number">
+        </div>
+
+        <div>
+            <label for="inputExternalRange">External Range</label>
+            <input id="inputExternalRange" type="number">
+        </div>
+        
+        <div>
+            <label for="selectGripMode">Grip Mode</label>
+            <select id="selectGripMode">
+                <option value="default">Default</option>
+                <option value="fast">Fast Approach</option>
+                <option value="soft">Soft Contact</option>
+                <option value="fast_soft">Fast + Soft</option>
+            </select>
+        </div>
+    
+    </section>
+
+    <section>
+        <h2>Preset</h2>
+
+            
+            <h3>Standby Preset</h3>
+            <div>
+                <label for="inputStandbyPreset">Preset number</label>
+                <input id="inputStandbyPreset" 
+                       type="number"
+                       min="1"
+                       max="5"
+                       value="1" >
+            </div>
+
+            <button id="btnSaveStandbyPreset">
+                Save
+            </button>
+
+            <button id="btnRunStandbyPreset">
+                Run
+            </button>
+
+        
+            <h3>Grip Preset</h3>
+            <div>
+                <label for="inputGripPreset">Preset number</label>
+                <input id="inputGripPreset" 
+                            type="number"
+                            min="1"
+                            max="10"
+                            value="1">
+                            
+
+            </div>
+            
+            <button id="btnSaveGripPreset">
+                Save
+            </button>
+
+            <button id="btnRunGripPreset">
+                Run
+            </button>
+
     </section>
 
    <section>
