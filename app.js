@@ -64,13 +64,8 @@ class MockDataModel {
     }
 }
 
+
 const dataModel = new MockDataModel();
-
-dataModel.set("position", 500);
-console.log(dataModel.get("position"));
-console.log(dataModel.has("position"));
-console.log(dataModel.has("speed"));
-
 
 
 function openView() {
@@ -82,11 +77,10 @@ function openView() {
 }
 
 function closeView(){
-    if (feedbackTimerId == null){
-        return;
-    }
-    clearInterval(feedbackTimerId);
-    feedbackTimerId = null;
+    if (feedbackTimerId !== null){
+        clearInterval(feedbackTimerId);
+        feedbackTimerId = null;
+    }    
     
     if (motionTimerId !== null){
         clearTimeout(motionTimerId);
@@ -109,6 +103,15 @@ function updateFeedback() {
 }
 
 
+function resetFeedback() {
+    actualSpeed.textContent = 0;
+    actualTorque.textContent = 0;
+    currentOperation.textContent = 'DISCONNECTED';
+    gripDetected.textContent = false;
+}
+
+
+
 
 btnConnect.addEventListener("click", function() {
     
@@ -122,7 +125,12 @@ btnDisconnect.addEventListener("click", function(){
     
     connected = false;
     connectionStatus.textContent = "DISCONNECTED";
+    mockOperation = 0;
+    mockGripDetected = false;
+    mockSpeed = 0;
+    mockTorque = 0;
     closeView();
+    resetFeedback();
 });
 
 btnOpen.addEventListener("click", function() {
@@ -250,7 +258,7 @@ btnGrip.addEventListener("click" , function() {
     motionTimerId = setTimeout(function() {
         mockPosition = gripPosition;
         mockSpeed = gripSpeed;
-        mockTorque = targetTorque;
+        mockTorque = gripTorque;
 
         mockGripDetected = true;
         mockOperation = "IDLE";
@@ -300,7 +308,7 @@ btnSaveStandbyPreset.addEventListener("click", function() {
     };
 
     //4. 저장할 key 만들기
-    let key = "standbyPreset_" + presetIndex;
+    let key = "StandbyPreset_" + presetIndex;
 
     //5. DataModel 저장
     dataModel.set(key, preset);
@@ -312,12 +320,25 @@ btnSaveStandbyPreset.addEventListener("click", function() {
 
 
 btnRunStandbyPreset.addEventListener("click", function() {
+    
+    // 연결 상태 확인 
+    if (!connected) {
+        logArea.textContent = "Gripper is not connected";
+        return;
+    }
+    
+    
+    // motion 진행 중인지 확인
+    if (motionTimerId != null){
+        logArea.textContent = "Motion is already in progress";
+        return;
+    }
 
     //1. preset 번호 읽기
     let presetIndex = Number(inputStandbyPreset.value);
 
     // 2. key 생성
-    let key = "standbyPreset_" + presetIndex;
+    let key = "StandbyPreset_" + presetIndex;
     
     //3. 저장된 preset 존재 여부 확인
     if (!dataModel.has(key)) {
@@ -328,22 +349,11 @@ btnRunStandbyPreset.addEventListener("click", function() {
     //4. 저장된 preset 가져오기
     let preset = dataModel.get(key);
 
-    //5. 연결 상태 확인 
-    if (!connected) {
-        logArea.textContent = "Gripper is not connected";
-        return;
-    }
-
-    //6. motion 진행 중인지 확인
-    if (motionTimerId != null){
-        logArea.textContent = "Motion is already in progress";
-        return;
-    }
-    //7. mockOperation 변경
-    mockOperation = "Standby Mode";
+    //5. mockOperation 변경
+    mockOperation = "STANDBY MODE";
     logArea.textContent = "Standby Preset run!";
 
-    //8. setTimeout()
+    //6. setTimeout()
     motionTimerId = setTimeout(function() {
 
         logArea.textContent = "Standby preset run complete";
@@ -355,6 +365,7 @@ btnRunStandbyPreset.addEventListener("click", function() {
     }, 1000)
 
 });
+
 
 
 btnSaveGripPreset.addEventListener("click", function() {
@@ -397,37 +408,40 @@ btnSaveGripPreset.addEventListener("click", function() {
 
 btnRunGripPreset.addEventListener("click", function() {
 
-    //1. preset 번호 읽기
-    let presetIndex = Number(inputGripPreset.value);
-
-    // 2. key 생성
-    let key = "GripPreset_" + presetIndex;
-    
-    //3. 저장된 preset 존재 여부 확인
-    if (!dataModel.has(key)) {
-        logArea.textContent = "Grip Preset " + presetIndex + "is not saved.";
-        return;
-    }
-
-    //4. 저장된 preset 가져오기
-    let preset = dataModel.get(key);
-
-    //5. 연결 상태 확인 
+  
+    // 연결 상태 확인 
     if (!connected) {
         logArea.textContent = "Gripper is not connected";
         return;
     }
-
-    //6. motion 진행 중인지 확인
+    
+    // motion 진행 중인지 확인
     if (motionTimerId != null){
         logArea.textContent = "Motion is already in progress";
         return;
     }
-    //7. mockOperation 변경
-    mockOperation = "Grip Mode";
+    
+    //1. preset 번호 읽기
+    let presetIndex = Number(inputGripPreset.value);
+    
+    // 2. key 생성
+    let key = "GripPreset_" + presetIndex;
+
+    // 저장된 preset 존재 여부 확인
+    if (!dataModel.has(key)) {
+        logArea.textContent = "Grip Preset " + presetIndex + " is not saved.";
+        return;
+    }
+    //3. 저장된 preset 가져오기
+    let preset = dataModel.get(key);
+
+    
+
+    // mockOperation 변경
+    mockOperation = "GRIP MODE";
     logArea.textContent = "Grip Preset run!";
 
-    //8. setTimeout()
+    // setTimeout()
     motionTimerId = setTimeout(function() {
 
         logArea.textContent = key + " run complete";
@@ -435,7 +449,10 @@ btnRunGripPreset.addEventListener("click", function() {
         mockPosition = preset.position;
         mockSpeed = preset.speed;
         mockTorque = preset.torque;
+        mockGripDetected = true;
         motionTimerId = null;
+
+        
     }, 1000)
 
 });
