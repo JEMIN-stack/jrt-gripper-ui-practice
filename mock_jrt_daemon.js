@@ -3,6 +3,7 @@ class MockJrtDaemon {
     constructor() {
         // Daemon 프로세스가 실제로 동작중인지 나타내는 값
         this.running = false;
+        this.connected = false;
     }
 
     startProcess() {
@@ -17,7 +18,7 @@ class MockJrtDaemon {
 
     // -1 = Daemon not running
     // -2 = Unknown command
-    executeCommand(command) {
+    executeCommand(command, params) {
         if (!this.running){
             console.log("[JRT Daemon] Process need to start!")
             return {
@@ -38,6 +39,10 @@ class MockJrtDaemon {
         else if (command === "GRIP"){
             console.log("[JRT Daemon] GRIP command received");
 
+            console.log(params.pos);
+            console.log(params.speed);
+            console.log(params.torque);
+
             return {
                 success: true,
                 errorCode: 0
@@ -53,6 +58,7 @@ class MockJrtDaemon {
                 errorCode: 0
             };
         }
+
 
         else{
             console.log("[JRT Daemon] Unknown command");
@@ -91,9 +97,10 @@ class MockJrtClient{
         this.jrtDaemon = jrtDaemon;
     }
 
-    sendCommand(command) {
-        return this.jrtDaemon.executeCommand(command);
+    sendCommand(command , params) {
+        return this.jrtDaemon.executeCommand(command, params);
     }
+
 }
 
 
@@ -127,14 +134,12 @@ const jrtClient = new MockJrtClient(jrtDaemon);
 // DaemonController을 외부 Contribution에 제공
 class MockDaemonService {
     constructor(daemonController){
-    this.daemonController = daemonController;
-    
+    this.daemonController = daemonController;    
     }
 
 
     getDaemon() {        
         return this.daemonController;
-
     }
 }
 
@@ -166,11 +171,34 @@ class MockGripperContribution {
     }
 
     open() {
-        this.jrtClient.sendCommand("OPEN");
+        const result = this.jrtClient.sendCommand("OPEN");
+        
+        if (result.success) {
+            console.log("[Contribution] OPEN success");
+        }
+        else {
+            console.log("[Contribution] OPEN failed!");
+            console.log("[Contribution] errorCode =", result.errorCode);
+        }
     }
 
     grip() {
-        this.jrtClient.sendCommand("GRIP");
+        const params = {
+            pos: 500,
+            speed: 50,
+            torque: 50
+        };
+
+        const result = this.jrtClient.sendCommand("GRIP", params);
+        
+        if (result.success)  {
+            console.log("[Contribution] Grip success");
+        }
+
+        else {
+            console.log("[Contribution] Grip failed");
+            console.log("[Contribution] Grip errorCode =", result.errorCode);
+        }
     }
 
     stopMotion() {
@@ -183,20 +211,26 @@ class MockGripperContribution {
 
 const contribution = new MockGripperContribution(daemonService, jrtClient);
 
-contribution.open();
+// contribution.open();
+// contribution.startDaemon();
+// contribution.open();
+// contribution.grip();
+// contribution.stopMotion();
+// contribution.stopDaemon();
 
-contribution.startDaemon();
+// controller.start();
+// const result2 = jrtClient.sendCommand("OPEN");
+// console.log(result2);
+// console.log(result2.success);
+// console.log(result2.errorCode);
 
-contribution.open();
+
+// contribution.open();
+// controller.start();
+// contribution.open();
+
 contribution.grip();
-contribution.stopMotion();
 
-contribution.stopDaemon();
-
-
-
-
-
-
-
+controller.start();
+contribution.grip();
 
